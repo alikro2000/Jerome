@@ -4,6 +4,9 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Main class for handling game logic and UI updates.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     /// <summary>
@@ -49,7 +52,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI m_RightPlayerTimerText;
 
     /// <summary>
-    /// The reference to the selection status indicator image for the right player.
+    /// The reference to the selection status indicator image for the right player <see cref="GameManager.m_RightPlayer"/>.
     /// </summary>
     [SerializeField]
     private Image m_RightPlayerSelectionImage;
@@ -74,12 +77,19 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // At the beginning of the game, all players must be able to act (move and jump enabled but no timer).
+        // Though keep in mind to alter this if future level designs dictate otherwise.
         m_RightPlayer.ActionsEnabled = true;
         m_LeftPlayer.ActionsEnabled = true;
     }
 
+    /// <summary>
+    /// Handle game loop events and logic.
+    /// </summary>
     private void Update()
     {
+        // The events of every game loop are handled in the following order.
+
         HandlePlayerSelection();
 
         HandlePlayerMovement();
@@ -93,8 +103,14 @@ public class GameManager : MonoBehaviour
         HandleUI();
     }
 
+    /// <summary>
+    /// Handles the winning or losing of a level according to game logic. Also, handles displaying of a proper panel before reloading.
+    /// </summary>
     private void HandleWinningAndLosing()
     {
+        // The level is won if both players are in a WinArea before the timer ran out,
+        // and a level is lost even if a player's time has ran out before it reaches
+        // a WinArea.
         if (m_LeftPlayer.IsInWinArea && m_RightPlayer.IsInWinArea)
         {
             m_WinPanel.gameObject.SetActive(true);
@@ -111,6 +127,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reloads the current level with a delay of 1.5 seconds.
+    /// </summary>
     private IEnumerator ReloadCurrentLevel()
     {
         Debug.Log("Reloading current level");
@@ -118,12 +137,19 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(m_LevelInfo.m_SceneName);
     }
 
+    /// <summary>
+    /// Loads the next level after the current level with a delay of 1.5 seconds.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator LoadNextLevel()
     {
         yield return new WaitForSeconds(1.5f);
         SceneManager.LoadScene(m_LevelInfo.m_NextLevelName);
     }
 
+    /// <summary>
+    /// Handles UI updates.
+    /// </summary>
     private void HandleUI()
     {
         //Handle players' timers UI
@@ -139,21 +165,24 @@ public class GameManager : MonoBehaviour
         m_RightPlayerWinningImage.color = new Color(63 / 255f, 207 / 255f, 63 / 255f, m_RightPlayer.IsInWinArea ? 1f : 0f);
     }
 
+    /// <summary>
+    /// Enables or disables players' timers according to the game logic.
+    /// </summary>
     private void HandlePlayersTimers()
     {
-        //Left player enabaled, right player disabled
+        //Left player selected, right player not selected
         if (m_LeftPlayer.ActionsEnabled && !m_RightPlayer.ActionsEnabled)
         {
             m_LeftPlayer.EnableTimer = true;
             m_RightPlayer.EnableTimer = false;
         }
-        //Right player enabaled, left player disabled
+        //Right player selected, left player not selected
         else if (!m_LeftPlayer.ActionsEnabled && m_RightPlayer.ActionsEnabled)
         {
             m_LeftPlayer.EnableTimer = false;
             m_RightPlayer.EnableTimer = true;
         }
-        //Both players enabled or disabled
+        //Both players selected or not
         else
         {
             m_LeftPlayer.EnableTimer = false;
@@ -161,6 +190,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Makes selected players jump.
+    /// </summary>
     private void HandlePlayerJump()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -170,6 +202,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves selected players to left or right through keyboard input.
+    /// </summary>
     private void HandlePlayerMovement()
     {
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -184,6 +219,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles only players' selection through keyboard input; only selected players can act (move, jump).
+    /// Note that a player that is in a WinArea cannot be selected.
+    /// </summary>
     private void HandlePlayerSelection()
     {
         if (Input.GetKeyDown(KeyCode.Q) && !m_LeftPlayer.IsInWinArea)
