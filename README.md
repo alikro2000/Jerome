@@ -4,6 +4,10 @@
 
 "Jerome" is A 2D platformer game where you control 2 players and they both must reach the goal in order for you to win the game. The screen is vertically divided in 2 sections and each player is located in one. They both move in the same direction & jump simultaneously but you can switch to control only one for a limited time.
 
+## Game Logic
+
+You have 2 players that move in the same direction. You win a level if both of your players reach a WinArea, and you lose if they don't. In some levels, the platforms for the players differ and you have to switch to control only one of them. But each player has only a limited amount of time to be controled on its own. A player whose time runs out, cannot move any more and the level restarts.
+
 ## Development Tools
 
 The tools I used to develop this during the jam:
